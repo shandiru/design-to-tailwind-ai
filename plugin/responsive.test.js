@@ -5,7 +5,8 @@ const vm = require('node:vm');
 const path = require('node:path');
 
 const ui = fs.readFileSync(path.join(__dirname, 'ui.html'), 'utf8');
-const script = ui.slice(ui.indexOf('<script>') + 8, ui.lastIndexOf('</script>'));
+const appStart = '<script id="plugin-app">';
+const script = ui.slice(ui.indexOf(appStart) + appStart.length, ui.lastIndexOf('</script>'));
 const helpers = script.slice(script.indexOf('  const VIEWPORTS'), script.indexOf('  onmessage ='));
 
 // Small DOM fixture for exercising the merge independently of Figma or network access.
@@ -57,13 +58,25 @@ function context(fixtures = {}) {
   return ctx;
 }
 
-test('UI JavaScript parses and only the optional AI button calls the backend', () => {
+test('UI JavaScript parses; Express compiles generation and packages exports without keys', () => {
   new vm.Script(script);
   const generate = script.slice(script.indexOf("  $('gen').onclick"), script.indexOf("  $('dbg').onclick"));
   const result = script.slice(script.indexOf("    if (m.type === 'result')"), script.indexOf('  function renderStats'));
-  assert.doesNotMatch(generate + result, /\bfetch\s*\(|\/api\//);
-  assert.equal((script.match(/\bfetch\s*\(/g) || []).length, 1);
-  assert.match(script, /\$\('ai'\)\.onclick = async/);
+  assert.match(result, /backendRequest\('\/api\/generate'/);
+  assert.match(generate, /reportGeneration/);
+  assert.match(result, /reportGeneration\('done'/);
+  assert.match(script, /backendRequest\('\/api\/events'/);
+  assert.doesNotMatch(ui, /<script src="https:\/\/cdn\.jsdelivr/);
+  assert.match(script, /\/api\/export/);
+  assert.doesNotMatch(script, /pluginkey|\/api\/refine|\$\('ai'\)/);
+});
+
+test('phone and desktop card grids infer a two-column tablet without another frame', () => {
+  const ctx = context();
+  ctx.mobile = new Element('div', 'Cards', 'grid grid-cols-1');
+  ctx.desktop = new Element('div', 'Cards', 'grid grid-cols-3');
+  const classes = vm.runInContext('mergeClassMaps([classMap(mobile), classMap(desktop)], [0, 3])', ctx);
+  assert.match(classes, /grid-cols-1 md:grid-cols-2 lg:grid-cols-3/);
 });
 
 test('one shared tree merges layout, inline paints, images, order and tablet sizes', () => {
@@ -78,10 +91,10 @@ test('one shared tree merges layout, inline paints, images, order and tablet siz
   const result = vm.runInContext('mergeResponsive(refs, ".im1{--im:url(__IMG_mobile__)}.im2{--im:url(__IMG_desktop__)}")', ctx);
   assert.equal((result.html.match(/Shared title/g) || []).length, 1);
   assert.equal((result.html.match(/<section/g) || []).length, 1);
-  assert.match(result.html, /max-w-\[1440px\]/);
+  assert.match(result.html, /max-w-7xl/);
   assert.doesNotMatch(result.html, /max-w-\[390px\]|data-layer|data-kind/);
   assert.match(result.html, /md:flex-row/);
-  assert.match(result.html, /sm:text-/);
+  assert.doesNotMatch(result.html, /sm:text-/);
   assert.match(result.html, /lg:text-\[64px\]/);
   assert.match(result.html, /@media\(min-width:768px\).*color:green/);
   assert.match(result.html, /@media\(min-width:1024px\).*__IMG_desktop__/);
@@ -126,7 +139,7 @@ test('Figma selection exports sorted viewport references without screenshots or 
   assert.ok(result);
   assert.equal(result.width, 1440);
   assert.deepEqual(Array.from(result.references, (ref) => ref.width), [390, 1440]);
-  assert.equal((result.html.match(/<div/g) || []).length, 1);
+  assert.equal((result.html.match(/<main/g) || []).length, 1);
   await vm.runInContext('generate({ responsive: false, images: false, exact: true })', ctx);
   assert.equal(messages.at(-1).type, 'error');
 });
@@ -179,12 +192,12 @@ test('SVGs with different root colors are not deduplicated into one symbol', asy
 test('responsive typography scales line height and removes inherited duplicate classes', () => {
   const ctx = svgContext();
   const values = vm.runInContext('rspText(64, { responsive: true })', ctx);
-  assert.ok(values.includes('xl:text-[64px]'));
+  assert.ok(values.includes('text-4xl') && values.includes('lg:text-6xl'));
   assert.ok(!values.some((value) => value.startsWith('2xl:')));
   const switched = vm.runInContext('rspSwitch("flex-col", "flex-row")', ctx);
   assert.deepEqual(Array.from(switched), ['flex-col', 'lg:flex-row']);
   ctx.segment = { fontSize: 64, fontName: { family: 'Inter', style: 'Regular' }, fontWeight: 400, lineHeight: { unit: 'PIXELS', value: 72 }, fills: [] };
   const styles = vm.runInContext('segStyle(segment, {}, { responsive: true }, { fonts: {} })', ctx);
-  assert.ok(styles.cls.includes('leading-[39.6px]'));
-  assert.ok(styles.cls.includes('xl:leading-[72px]'));
+  assert.ok(styles.cls.includes('leading-[1.13]'));
+  assert.ok(!styles.cls.some((value) => /(?:sm|md|lg|xl):leading-/.test(value)));
 });
