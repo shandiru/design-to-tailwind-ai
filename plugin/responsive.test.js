@@ -58,7 +58,7 @@ function context(fixtures = {}) {
   return ctx;
 }
 
-test('UI JavaScript parses; Express compiles generation and packages exports without keys', () => {
+test('UI JavaScript parses; Gemini is optional and no credential is hardcoded', () => {
   new vm.Script(script);
   const generate = script.slice(script.indexOf("  $('gen').onclick"), script.indexOf("  $('dbg').onclick"));
   const result = script.slice(script.indexOf("    if (m.type === 'result')"), script.indexOf('  function renderStats'));
@@ -68,7 +68,9 @@ test('UI JavaScript parses; Express compiles generation and packages exports wit
   assert.match(script, /backendRequest\('\/api\/events'/);
   assert.doesNotMatch(ui, /<script src="https:\/\/cdn\.jsdelivr/);
   assert.match(script, /\/api\/export/);
-  assert.doesNotMatch(script, /pluginkey|\/api\/refine|\$\('ai'\)/);
+  assert.match(script, /GEMINI_MODEL = 'gemini-3\.8-flash'/);
+  assert.match(script, /save-gemini-settings/);
+  assert.doesNotMatch(ui, /AQ\.Ab8RN6K/);
 });
 
 test('phone and desktop card grids infer a two-column tablet without another frame', () => {
@@ -95,10 +97,11 @@ test('one shared tree merges layout, inline paints, images, order and tablet siz
   assert.doesNotMatch(result.html, /max-w-\[390px\]|data-layer|data-kind/);
   assert.match(result.html, /md:flex-row/);
   assert.doesNotMatch(result.html, /sm:text-/);
-  assert.match(result.html, /lg:text-\[64px\]/);
-  assert.match(result.html, /@media\(min-width:768px\).*color:green/);
-  assert.match(result.html, /@media\(min-width:1024px\).*__IMG_desktop__/);
-  assert.match(result.html, /lg:order-\[1\]/);
+  assert.match(result.html, /xl:text-\[64px\]/);
+  assert.match(result.html, /\[color:red\].*md:\[color:green\].*xl:\[color:blue\]/);
+  assert.match(result.html, /\[--im:url\(__IMG_mobile__\)\].*xl:\[--im:url\(__IMG_desktop__\)\]/);
+  assert.match(result.html, /xl:order-\[1\]/);
+  assert.doesNotMatch(result.html, /<style| style=/);
   assert.equal(result.unmatched, 0);
 });
 
@@ -121,8 +124,8 @@ test('two references infer tablet typography and spacing while retaining the des
   ctx.mobile = new Element('p', 'Title Mobile', 'text-[28px] p-4 gap-4');
   ctx.desktop = new Element('p', 'Title Desktop', 'text-[64px] p-16 gap-12');
   const classes = vm.runInContext('mergeClassMaps([classMap(mobile), classMap(desktop)], [0, 3])', ctx);
-  assert.match(classes, /text-\[28px\] md:text-\[46px\] lg:text-\[64px\]/);
-  assert.match(classes, /md:pt-\[40px\] lg:pt-16/);
+  assert.match(classes, /text-\[28px\] sm:text-\[40px\] md:text-\[52px\] lg:text-\[64px\]/);
+  assert.match(classes, /sm:pt-\[32px\] md:pt-\[48px\] lg:pt-16/);
 });
 
 test('mobile and desktop references can be captured separately and component sets expand to variants', async () => {
@@ -157,8 +160,8 @@ test('unmatched controls are hidden outside their source viewport and reported',
   });
   ctx.refs = [{ width: 390, html: 'mobile' }, { width: 1440, html: 'desktop' }];
   const result = vm.runInContext('mergeResponsive(refs)', ctx);
-  assert.match(result.html, /lg:hidden/);
-  assert.match(result.html, /hidden lg:flex/);
+  assert.match(result.html, /xl:hidden/);
+  assert.match(result.html, /hidden xl:flex/);
   assert.equal(result.unmatched, 2);
 });
 
@@ -240,8 +243,8 @@ test('SVGs with different root colors are not deduplicated into one symbol', asy
 test('responsive typography scales line height and removes inherited duplicate classes', () => {
   const ctx = svgContext();
   const values = vm.runInContext('rspText(64, { responsive: true })', ctx);
-  assert.ok(values.includes('text-[35.2px]') && values.includes('lg:text-[64px]'));
-  assert.ok(!values.some((value) => value.startsWith('2xl:')));
+  assert.ok(values.includes('text-[35.2px]') && values.includes('2xl:text-[64px]'));
+  for (const breakpoint of ['sm:', 'md:', 'lg:', 'xl:', '2xl:']) assert.ok(values.some((value) => value.startsWith(breakpoint)));
   const switched = vm.runInContext('rspSwitch("flex-col", "flex-row")', ctx);
   assert.deepEqual(Array.from(switched), ['flex-col', 'lg:flex-row']);
   ctx.segment = { fontSize: 64, fontName: { family: 'Inter', style: 'Regular' }, fontWeight: 400, lineHeight: { unit: 'PIXELS', value: 72 }, fills: [] };
