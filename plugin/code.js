@@ -37,14 +37,14 @@ function responsiveVariants(values) {
   return values.flatMap((value, i) => i && value === values[i - 1] ? [] : [bp(BPS[i], value)]);
 }
 const rsp = (pre, v, opts, cfg) => {
-  const o = Object.assign({ thr: 24, min: 0, factors: [0.5, 0.62, 0.74, 0.86, 0.94, 1] }, cfg || {});
+  const o = Object.assign({ thr: 24, min: 0, factors: [0.5, 0.65, 0.78, 0.9, 1, 1] }, cfg || {});
   if (!opts.responsive || v < o.thr) return [sp(pre, v)];
-  return o.factors.map((factor, index) => bp(BPS[index], sp(pre, Math.max(o.min, Math.round(v * factor)))));
+  return responsiveVariants([0, 0, 2, 4, 4, 4].map((index) => sp(pre, Math.max(o.min, Math.round(v * o.factors[index])))));
 };
 const rspText = (fs, opts) => {
   if (!opts.responsive || fs < 28) return [textSize(fs)];
-  const factors = fs >= 40 ? [0.55, 0.64, 0.73, 0.82, 0.91, 1] : [0.75, 0.8, 0.85, 0.9, 0.95, 1];
-  return factors.map((factor, index) => bp(BPS[index], textSize(fs * factor)));
+  const factors = fs >= 40 ? [0.55, 0.65, 0.78, 0.9, 1, 1] : [0.75, 0.82, 0.9, 0.96, 1, 1];
+  return responsiveVariants([0, 0, 2, 4, 4, 4].map((index) => textSize(fs * factors[index])));
 };
 const rspSwitch = (smallCls, largeCls) => responsiveVariants(BPS.map((_, i) => i < 3 ? smallCls : largeCls));
 const WNAME = { 100: 'thin', 200: 'extralight', 300: 'light', 400: 'normal', 500: 'medium', 600: 'semibold', 700: 'bold', 800: 'extrabold', 900: 'black' };
@@ -79,14 +79,14 @@ function gradCss(p, w, h) {
   return `linear-gradient(${c0},${c0})`;
 }
 
-const arbitrary = (property, value) => `[${property}:${String(value).trim().replace(/\s+/g, '_')}]`;
-
-// Keep image bytes out of the markup until the UI has compressed them.
+// image bytes direct ah embed pannala: class la token vachu, UI compress panni replace pannum
 function imageRef(p, w, h, opts, ctx, cls) {
-  if (!opts.images || !p.imageHash) return `url(https://placehold.co/${Math.round(w)}x${Math.round(h)})`;
-  if (!ctx.imgCls[p.imageHash]) ctx.imgCls[p.imageHash] = 'image';
+  if (!opts.images || !p.imageHash || cls.some((x) => /^im\d+$/.test(x))) return `url(https://placehold.co/${Math.round(w)}x${Math.round(h)})`;
+  let c = ctx.imgCls[p.imageHash];
+  if (!c) { c = 'im' + (++ctx.imgN); ctx.imgCls[p.imageHash] = c; }
   ctx.imgSize[p.imageHash] = Math.max(ctx.imgSize[p.imageHash] || 0, Math.max(w, h) * 2);
-  return `url(__IMG_${p.imageHash}__)`;
+  cls.push(c);
+  return 'var(--im)';
 }
 
 function rasterRef(n, ctx) {
@@ -102,7 +102,7 @@ function rasterRef(n, ctx) {
     }).catch(() => null);
     ctx.imgSize[key] = Math.max(n.width || 800, n.height || 600) * 2;
   }
-  return arbitrary('background-image', `url(__IMG_${ctx.maskKey[n.id]}__)`);
+  return c;
 }
 
 function rasterClasses(n, parent, opts, isRoot, ctx) {
@@ -128,13 +128,7 @@ async function bgFor(n, opts, ctx) {
     }
   }
   if (!L.length) return { cls: [], style: [] };
-  cls.push(
-    arbitrary('background-image', L.map((l) => l.img).join(',')),
-    arbitrary('background-size', L.map((l) => l.size).join(',')),
-    'bg-center',
-    arbitrary('background-repeat', L.map((l) => l.rep).join(','))
-  );
-  return { cls, style: [] };
+  return { cls, style: [`background-image:${L.map((l) => l.img).join(',')}`, `background-size:${L.map((l) => l.size).join(',')}`, 'background-position:center', `background-repeat:${L.map((l) => l.rep).join(',')}`] };
 }
 
 /* rotated / zero-thickness vectors (LINE) ku rotated bounding box use pannanum */
@@ -191,7 +185,7 @@ function sizeClasses(n, parent, opts, isRoot) {
     if (!isT) c.push(sp('h', G.h));
     return c;
   }
-  if (opts.preserve) {
+  if (opts.annotate || opts.preserve) {
     // References are measured designs. Preserve their geometry before merging viewports.
     const auto = parent && parent.layoutMode && parent.layoutMode !== 'NONE';
     if (isRoot) return ['relative', 'mx-auto', 'w-full', maxWidth(n.width), ...(!n.layoutMode || n.layoutMode === 'NONE' ? [sp('h', n.height)] : n.layoutSizingVertical === 'FIXED' ? [sp('min-h', n.height)] : [])];
@@ -228,9 +222,9 @@ function sizeClasses(n, parent, opts, isRoot) {
 
 // Layer coordinates are evidence for grouping, never the normal CSS positioning model.
 function isOverlay(n, parent) {
-  // Responsive output stays in document flow. Exact mode has its own absolute
-  // geometry path in sizeClasses and does not depend on this heuristic.
-  return false;
+  if (!parent) return false;
+  return /\b(badge|overlay|floating|decoration|decorative)\b/i.test(n.name || '') &&
+    (n.layoutPositioning === 'ABSOLUTE' || !parent.layoutMode || parent.layoutMode === 'NONE');
 }
 function layoutPlan(n) {
   const children = (n.children || []).filter((child) => child.visible !== false && !isOverlay(child, n));
@@ -256,11 +250,11 @@ function repeatedItems(n) {
 }
 
 function flexClasses(n, opts, isRoot = false) {
-  if (opts.preserve && (!n.layoutMode || n.layoutMode === 'NONE')) return ['relative'];
+  if ((opts.annotate || opts.preserve) && (!n.layoutMode || n.layoutMode === 'NONE')) return ['relative'];
   const c = [], plan = layoutPlan(n);
   const horiz = n.layoutMode === 'HORIZONTAL' || (plan.inferred && plan.rows.length === 1 && plan.rows[0].length > 1);
   const stk = horiz && opts.responsive && n.width >= 600;
-  if (repeatedItems(n) && !opts.preserve) c.push('grid', 'grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-3', '2xl:grid-cols-4');
+  if (repeatedItems(n) && !opts.annotate && !opts.preserve) c.push('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
   else c.push('flex', ...(stk ? ['flex-col', 'lg:flex-row'] : [horiz ? 'flex-row' : 'flex-col']));
   if (n.layoutWrap === 'WRAP') c.push('flex-wrap');
   let gap = n.itemSpacing;
@@ -323,11 +317,11 @@ function effects(n, cls, style) {
   const ef = n.effects.filter((e) => e.visible !== false);
   const sh = ef.filter((e) => e.type === 'DROP_SHADOW' || e.type === 'INNER_SHADOW');
   if (sh.length) {
-    const value = sh.map((e) => `${e.type === 'INNER_SHADOW' ? 'inset ' : ''}${r(e.offset.x)}px ${r(e.offset.y)}px ${r(e.radius)}px ${r(e.spread || 0)}px ${rgba(e.color, e.color.a)}`).join(',');
-    cls.push(arbitrary(n.type === 'TEXT' ? 'text-shadow' : 'box-shadow', value));
+    if (n.type === 'TEXT') style.push('text-shadow:' + sh.map((e) => `${r(e.offset.x)}px ${r(e.offset.y)}px ${r(e.radius)}px ${rgba(e.color, e.color.a)}`).join(','));
+    else style.push('box-shadow:' + sh.map((e) => `${e.type === 'INNER_SHADOW' ? 'inset ' : ''}${r(e.offset.x)}px ${r(e.offset.y)}px ${r(e.radius)}px ${r(e.spread || 0)}px ${rgba(e.color, e.color.a)}`).join(','));
   }
-  const lb = ef.find((e) => e.type === 'LAYER_BLUR'); if (lb) cls.push(`blur-[${r(lb.radius / 2)}px]`);
-  const bb = ef.find((e) => e.type === 'BACKGROUND_BLUR'); if (bb) cls.push(`backdrop-blur-[${r(bb.radius / 2)}px]`);
+  const lb = ef.find((e) => e.type === 'LAYER_BLUR'); if (lb) style.push(`filter:blur(${r(lb.radius / 2)}px)`);
+  const bb = ef.find((e) => e.type === 'BACKGROUND_BLUR'); if (bb) style.push(`backdrop-filter:blur(${r(bb.radius / 2)}px)`, `-webkit-backdrop-filter:blur(${r(bb.radius / 2)}px)`);
 }
 
 /* ---------- text ---------- */
@@ -342,7 +336,7 @@ function segStyle(seg, n, opts, ctx, force) {
   if (lh && lh.unit === 'PIXELS') {
     const ratio = lh.value / fs;
     const line = { 1: 'none', 1.25: 'tight', 1.375: 'snug', 1.5: 'normal', 1.625: 'relaxed', 2: 'loose' }[ratio];
-    c.push(opts.preserve ? `leading-[${r(lh.value)}px]` : line ? `leading-${line}` : `leading-[${Math.round(ratio * 10000) / 10000}]`);
+    c.push(opts.annotate || opts.preserve ? `leading-[${r(lh.value)}px]` : line ? `leading-${line}` : `leading-[${Math.round(ratio * 10000) / 10000}]`);
   }
   else if (lh && lh.unit === 'PERCENT') c.push(`leading-[${r(lh.value)}%]`);
   const ls = seg.letterSpacing;
@@ -354,7 +348,7 @@ function segStyle(seg, n, opts, ctx, force) {
   if (seg.textCase === 'TITLE') c.push('capitalize');
   const f = topPaint(seg.fills);
   if (f && f.type === 'SOLID') c.push(`text-[${colorStr(f.color, op(f))}]`);
-  else if (isGrad(f)) c.push(arbitrary('background-image', gradCss(f, n.width, n.height)), 'bg-clip-text', 'text-transparent');
+  else if (isGrad(f)) st.push(`background-image:${gradCss(f, n.width, n.height)}`, '-webkit-background-clip:text', 'background-clip:text', '-webkit-text-fill-color:transparent', 'color:transparent');
   return { cls: c, style: st };
 }
 
@@ -395,12 +389,12 @@ async function textHtml(n, parent, opts, ctx, ind, isRoot) {
   if (segs.length > 1) {
     inner = segs.map((s) => {
       const ss = segStyle(s, n, opts, ctx, true);
-      return `<span class="${ss.cls.join(' ')}">${txt(s.characters)}</span>`;
+      return `<span class="${ss.cls.join(' ')}"${ss.style.length ? ` style="${ss.style.join(';')}"` : ''}>${txt(s.characters)}</span>`;
     }).join('');
   } else inner = txt(segs[0].characters);
   const parentTag = parent && tagFor(parent, 0);
   const tag = ['button', 'a', 'label'].includes(parentTag) ? 'span' : tagFor(n, segs[0].fontSize, ctx);
-  return `${ind}<${tag} class="${c.join(' ')}">${inner}</${tag}>`;
+  return `${ind}<${tag} class="${c.join(' ')}"${style.length ? ` style="${style.join(';')}"` : ''}>${inner}</${tag}>`;
 }
 
 /* ---------- icons / vectors ---------- */
@@ -510,7 +504,7 @@ async function renderNode(n, parent, opts, depth, ctx) {
   const sz = sizeClasses(n, parent, opts, isRoot);
   const kids = n.children || [];
   const c = [...sz, ...(opts.exact ? [] : flexClasses(n, opts, isRoot))];
-  const needsRel = opts.exact || (opts.preserve && (!n.layoutMode || n.layoutMode === 'NONE')) || kids.some((k) => isOverlay(k, n));
+  const needsRel = opts.exact || ((opts.annotate || opts.preserve) && (!n.layoutMode || n.layoutMode === 'NONE')) || kids.some((k) => isOverlay(k, n));
   if (needsRel && !sz.includes('absolute') && !sz.includes('relative')) c.push('relative');
   const vis = await visualClasses(n, opts, ctx);
   c.push(...vis.cls);
@@ -519,11 +513,8 @@ async function renderNode(n, parent, opts, depth, ctx) {
   if (!opts.exact && hasImage(n) && !kids.length) {
     const paint = visible(n.fills).find((p) => p.type === 'IMAGE');
     const key = paint.imageHash;
-    const imageClasses = c.filter((value) =>
-      !/^\[(?:background-image|background-size|background-repeat):/.test(value) &&
-      !['bg-center', 'bg-cover', 'bg-contain', 'bg-no-repeat', 'flex', 'flex-col', 'flex-row', 'items-stretch', 'justify-start', 'w-fit'].includes(value)
-    );
-    if (opts.preserve) {
+    const imageClasses = c.filter((value) => !/^im\d+$/.test(value) && !['flex', 'flex-col', 'flex-row', 'items-stretch', 'justify-start', 'w-fit'].includes(value));
+    if (opts.annotate || opts.preserve) {
       if (!imageClasses.some((value) => /^(?:w-|flex-1)/.test(value))) imageClasses.push(sp('w', n.width));
       if (!imageClasses.some((value) => /^(?:h-|self-stretch)/.test(value))) imageClasses.push(sp('h', n.height));
     } else imageClasses.push('w-full', 'h-auto');
@@ -532,7 +523,7 @@ async function renderNode(n, parent, opts, depth, ctx) {
   }
   const out = [];
   const plan = layoutPlan(n);
-  const rows = !opts.exact && !opts.preserve && plan.inferred && !repeatedItems(n) ? plan.rows : [kids.filter((child) => !isOverlay(child, n))];
+  const rows = !opts.exact && !opts.annotate && !opts.preserve && plan.inferred && !repeatedItems(n) ? plan.rows : [kids.filter((child) => !isOverlay(child, n))];
   for (const row of rows) {
     const wrap = plan.inferred && rows.length > 1 && row.length > 1;
     const contents = [];
@@ -545,7 +536,7 @@ async function renderNode(n, parent, opts, depth, ctx) {
   }
   // Interactive elements cannot contain heading/paragraph controls or nested buttons.
   const attrs = tag === 'button' ? ' type="button"' : tag === 'a' ? ' href="#"' : tag === 'input' ? ` type="${/email/i.test(n.name) ? 'email' : /search/i.test(n.name) ? 'search' : 'text'}" aria-label="${esc(n.name)}"` : '';
-  const open = `<${tag}${attrs} class="${c.join(' ')}">`;
+  const open = `<${tag}${attrs} class="${c.join(' ')}"${vis.style.length ? ` style="${vis.style.join(';')}"` : ''}>`;
   if (tag === 'input') return `${ind}${open}`;
   if (!out.length) return `${ind}${open}</${tag}>`;
   return `${ind}${open}\n${out.join('\n')}\n${ind}</${tag}>`;
@@ -592,13 +583,7 @@ async function generate(opts) {
     for (const n of sel) {
       // Measure supplied designs without heuristic scaling; the UI merges their layers locally.
       ctx.h1 = 0;
-      const markup = await toHtml(n, null, {
-        ...opts,
-        preserve: !!opts.exact,
-        fluidCoordinates: false,
-        responsive: !multi && !!opts.responsive,
-        annotate: multi
-      }, 0, ctx);
+      const markup = await toHtml(n, null, { ...opts, preserve: true, fluidCoordinates: opts.responsive && !opts.exact, responsive: false, annotate: multi }, 0, ctx);
       references.push({ name: n.name, width: Math.round(n.width), height: Math.round(n.height), html: markup });
     }
     const counts = new Map(), colors = {};
@@ -613,12 +598,16 @@ async function generate(opts) {
     const fonts = {};
     Object.keys(ctx.fonts).forEach((f) => { fonts[f] = Array.from(ctx.fonts[f]).sort((a, b) => a - b); });
     let head = '';
-    if (ctx.symDefs.length) head += `<svg class="hidden" width="0" height="0" aria-hidden="true"><defs>${ctx.symDefs.join('')}</defs></svg>\n`;
+    if (ctx.symDefs.length) head += `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>${ctx.symDefs.join('')}</defs></svg>\n`;
     const hashes = Object.keys(ctx.imgCls);
     const maskKeys = Object.keys(ctx.maskKey).map((id) => ctx.maskKey[id]);
     const assetKeys = hashes.concat(maskKeys);
     const images = {}, sizes = {};
     for (const h of assetKeys) { const b = await ctx.bytes[h]; if (b) { images[h] = b; sizes[h] = Math.round(ctx.imgSize[h]); } }
+    const imageCss = hashes.map((h) => `.${ctx.imgCls[h]}{--im:url(__IMG_${h}__)}`);
+    const maskCss = Object.keys(ctx.maskKey).map((id) => `.${ctx.maskCls[id]}{background-image:url(__IMG_${ctx.maskKey[id]}__)}`);
+    const fontCss = Object.keys(fonts).map((f) => `.${slug(f)}{font-family:"${cssEsc(f)}",${/mono|code|courier/i.test(f) ? 'monospace' : (/serif|playfair|merriweather|lora|georgia|times|garamond|cormorant|bodoni/i.test(f) && !/sans/i.test(f)) ? 'serif' : 'sans-serif'}}`);
+    if (imageCss.length || maskCss.length || fontCss.length) head += '<style>' + imageCss.concat(maskCss, fontCss).join('') + '</style>\n';
     figma.ui.postMessage({ type: 'result', html: head + desktop.html, fonts, colors, images, sizes, width: desktop.width, height: desktop.height, responsive: !!opts.responsive, references: multi ? references : [] });
   } catch (e) {
     figma.ui.postMessage({ type: 'error', msg: String(e && e.stack ? e.stack : e) });
@@ -664,11 +653,6 @@ figma.ui.onmessage = async (m) => {
         await figma.clientStorage.setAsync('backend-settings', clean).catch(() => null);
         figma.ui.postMessage({ type: 'backend-settings', settings: clean });
       }
-      const aiSettings = await figma.clientStorage.getAsync('gemini-settings').catch(() => null);
-      if (aiSettings) figma.ui.postMessage({
-        type: 'gemini-settings',
-        settings: { apiKey: String(aiSettings.apiKey || '').slice(0, 300), enabled: aiSettings.enabled !== false }
-      });
     }
   }
 
@@ -676,12 +660,6 @@ figma.ui.onmessage = async (m) => {
   if (m.type === 'save-backend-settings' && figma.clientStorage && m.settings) {
     await figma.clientStorage.setAsync('backend-settings', {
       url: String(m.settings.url || '').slice(0, 500), logging: m.settings.logging !== false
-    }).catch(() => null);
-  }
-  if (m.type === 'save-gemini-settings' && figma.clientStorage && m.settings) {
-    await figma.clientStorage.setAsync('gemini-settings', {
-      apiKey: String(m.settings.apiKey || '').trim().slice(0, 300),
-      enabled: m.settings.enabled !== false
     }).catch(() => null);
   }
   if (m.type === 'open-dashboard' && typeof m.url === 'string' && /^https:\/\/[^\s]+$|^http:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\/?$/.test(m.url)) figma.openExternal(m.url);

@@ -18,14 +18,13 @@
   }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
-  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
-  body { min-width: 0; font: 12px/1.45 Inter, system-ui, -apple-system, 'Segoe UI', sans-serif; background: var(--bg); color: var(--tx); display: flex; flex-direction: column; overflow: hidden; }
-  body > * { width: 100%; min-width: 0; max-width: 100%; }
+  html, body { height: 100%; margin: 0; }
+  body { font: 12px/1.45 Inter, system-ui, -apple-system, 'Segoe UI', sans-serif; background: var(--bg); color: var(--tx); display: flex; flex-direction: column; overflow: hidden; }
   svg { display: block; flex-shrink: 0; }
   button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
 
   /* header */
-  header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--bd); overflow: hidden; }
+  header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--bd); }
   .logo { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, #0d99ff, #7b61ff); display: grid; place-items: center; color: #fff; }
   .title { font-size: 13px; font-weight: 600; }
   .chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; color: var(--tx2); font-size: 11px; max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -33,8 +32,8 @@
   .dot.on { background: #14ae5c; }
 
   /* options */
-  .bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--bg2); border-bottom: 1px solid var(--bd); }
-  .switch { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; white-space: nowrap; }
+  .bar { display: flex; align-items: center; gap: 16px; padding: 10px 14px; background: var(--bg2); border-bottom: 1px solid var(--bd); }
+  .switch { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
   .switch input { display: none; }
   .track { width: 28px; height: 16px; border-radius: 999px; background: var(--bg3); position: relative; transition: .15s; border: 1px solid var(--bd); }
   .track::after { content: ''; position: absolute; left: 1px; top: 1px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: .15s; }
@@ -53,10 +52,10 @@
   @keyframes sp { to { transform: rotate(360deg); } }
 
   /* tabs */
-  .tabs { display: flex; align-items: center; gap: 4px; padding: 8px 14px 0; border-bottom: 1px solid var(--bd); overflow: hidden; }
+  .tabs { display: flex; align-items: center; gap: 4px; padding: 8px 14px 0; border-bottom: 1px solid var(--bd); }
   .tab { padding: 7px 12px; border-radius: 6px 6px 0 0; color: var(--tx2); font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -1px; }
   .tab.active { color: var(--tx); border-bottom-color: var(--brand); }
-  .devices { display: flex; flex: 1 1 560px; justify-content: flex-end; padding: 2px; border-radius: 8px; background: var(--bg2); border: 1px solid var(--bd); margin-bottom: 6px; overflow: hidden; }
+  .devices { display: inline-flex; padding: 2px; border-radius: 8px; background: var(--bg2); border: 1px solid var(--bd); margin-bottom: 6px; }
   .dev { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 6px; color: var(--tx2); font-weight: 500; }
   .dev.active { background: var(--bg); color: var(--tx); box-shadow: 0 1px 2px rgba(0,0,0,.15); }
 
@@ -64,10 +63,10 @@
   main { flex: 1; min-height: 0; position: relative; }
   .panel { position: absolute; inset: 0; display: none; }
   .panel.active { display: block; }
-  .stage { height: 100%; overflow: auto; padding: 16px; background: var(--bg2); background-image: radial-gradient(var(--bd) 1px, transparent 1px); background-size: 14px 14px; }
-  .frame { margin: 0 auto; background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px var(--bd), 0 8px 24px rgba(0,0,0,.12); overflow: hidden; }
+  .stage { height: 100%; min-width: 0; overflow-x: hidden; overflow-y: auto; scrollbar-gutter: stable; padding: 16px; background: var(--bg2); background-image: radial-gradient(var(--bd) 1px, transparent 1px); background-size: 14px 14px; }
+  .frame { max-width: 100%; margin: 0 auto; background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px var(--bd), 0 8px 24px rgba(0,0,0,.12); overflow: hidden; }
   .frame iframe { border: 0; display: block; background: #fff; transform-origin: top left; }
-  textarea { width: 100%; max-width: 100%; height: 100%; resize: none; border: 0; outline: none; padding: 14px; background: var(--bg); color: var(--tx); font: 11.5px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; }
+  textarea { width: 100%; height: 100%; resize: none; border: 0; outline: none; padding: 14px; background: var(--bg); color: var(--tx); font: 11.5px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; tab-size: 2; }
 
   /* empty / error */
   .empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; padding: 30px; color: var(--tx2); background: var(--bg); z-index: 2; }
@@ -104,17 +103,12 @@
   .reference-slot strong,.reference-slot small { display: block; overflow-wrap: anywhere; }
   .reference-slot small { color: var(--tx2); margin: 4px 0 8px; }
   .reference-help { color: var(--tx2); font-size: 11px; }
-  .tabs,.devices,.bar,footer { flex-wrap: wrap; }
-  .devices { max-width: 100%; flex-wrap: wrap; }
-  .ai-note { color: var(--tx2); font-size: 11px; }
-  #gemini-key { min-width: min(420px, 100%); }
+  header,.tabs,.devices,.bar,.aibar,footer { min-width: 0; flex-wrap: wrap; }
+  .devices { max-width: 100%; }
   @media (max-width: 760px) {
     .reference-grid { grid-template-columns: 1fr; }
-    .bar { align-items: flex-start; }
-    .bar .spacer { display: none; }
-    .bar .btn.primary { margin-left: auto; }
-    .devices { justify-content: flex-start; }
-    footer .stats { flex-basis: 100%; }
+    .bar { gap: 10px; }
+    .devices { width: 100%; overflow-x: auto; flex-wrap: nowrap; }
   }
 </style>
 </head>
@@ -142,32 +136,26 @@
   <div class="bar">
     <label class="switch"><input type="checkbox" id="rsp" checked><span class="track"></span>Responsive</label>
     <label class="switch"><input type="checkbox" id="img" checked><span class="track"></span>Embed images</label>
-    <label class="switch"><input type="checkbox" id="ai" checked><span class="track"></span>Gemini polish</label>
+    <label class="switch" title="Optional server-side responsive code review"><input type="checkbox" id="ai" checked disabled><span class="track"></span>Gemini polish</label>
     <label class="switch" title="Figma-la irukkura madhiriye pixel-perfect (responsive illa)"><input type="checkbox" id="exact"><span class="track"></span>Exact layout</label>
     <span class="spacer"></span>
     <button class="btn primary" id="gen"><span class="spin"></span><span id="genlabel">Generate</span></button>
   </div>
   <div class="aibar">
-    <span class="aitag">Tailwind</span>
-    <span>Flow layout · no generated custom CSS</span>
-    <span>Mobile-first output with sm, md, lg, xl and 2xl utilities.</span>
+    <span class="aitag">Express</span>
+    <span>HTML + Tailwind</span>
+    <span>Original design sizes and spacing. Add mobile + desktop for responsive output.</span>
+    <span id="ai-status">Checking AI availability…</span>
     <span class="spacer"></span>
   </div>
-  <details class="aibar" id="gemini-settings">
-    <summary>Gemini AI settings</summary>
-    <label for="gemini-key">API key</label><input class="inp grow" id="gemini-key" type="password" autocomplete="off" placeholder="Paste a rotated Gemini API key">
-    <button class="btn ghost" id="save-gemini">Save locally</button>
-    <span class="ai-note">Model: <strong id="gemini-model"></strong>. The key stays in this Figma installation and is never added to generated code.</span>
-    <span id="ai-status" role="status"></span>
-  </details>
   <details class="aibar">
     <summary>Backend connection</summary>
     <label for="apiurl">Backend URL</label><input class="inp grow" id="apiurl" value="https://figma-backend-xi.vercel.app" type="url">
     <label><input id="logbackend" type="checkbox" checked> Show Generate / ZIP activity and code on backend dashboard</label>
     <button class="btn ghost" id="dashboard">Open dashboard</button>
-    <span>Express compiles responsive CSS and packages your ZIP. No keys required.</span>
+    <span>Express compiles responsive CSS and packages your ZIP. Gemini keys stay in backend environment variables and are never stored in this plugin.</span>
   </details>
-  <div class="aibar" role="status" aria-live="polite"><span id="pipeline-status">Ready to generate</span><span class="spacer"></span><span id="backend-status">Dashboard ready · Generate to start</span></div>
+  <div class="aibar" role="status" aria-live="polite"><span id="pipeline-status">Ready to generate</span><span class="spacer"></span><span id="backend-status">Dashboard ready ? Generate to start</span></div>
   <div id="err"></div>
 
   <div class="tabs">
@@ -264,79 +252,15 @@ If '${e}' is a directive input, make sure the directive is imported by the curre
 `){let r=t.children[0];r.value.length===1?t.removeChild(r):r.value=r.value.slice(1)}})}function fo(e){let t=r=>r.kind==="element"&&r.prev?.kind==="ieConditionalStartComment"&&r.prev.sourceSpan.end.offset===r.startSourceSpan.start.offset&&r.firstChild?.kind==="ieConditionalEndComment"&&r.firstChild.sourceSpan.start.offset===r.startSourceSpan.end.offset;e.walk(r=>{if(r.children)for(let n=0;n<r.children.length;n++){let i=r.children[n];if(!t(i))continue;let s=i.prev,a=i.firstChild;r.removeChild(s),n--;let o=new p(s.sourceSpan.start,a.sourceSpan.end),l=new p(o.start,i.sourceSpan.end);i.condition=s.condition,i.sourceSpan=l,i.startSourceSpan=o,i.removeChild(a)}})}function go(e,t,r){e.walk(n=>{if(n.children)for(let i=0;i<n.children.length;i++){let s=n.children[i];if(s.kind!=="text"&&!t(s))continue;s.kind!=="text"&&(s.kind="text",s.value=r(s));let a=s.prev;!a||a.kind!=="text"||(a.value+=s.value,a.sourceSpan=new p(a.sourceSpan.start,s.sourceSpan.end),n.removeChild(s),i--)}})}function _o(e){return go(e,t=>t.kind==="cdata",t=>`<![CDATA[${t.value}]]>`)}function So(e){let t=r=>r.kind==="element"&&r.attrs.length===0&&!J(r.startTagComments)&&r.children.length===1&&r.firstChild.kind==="text"&&!P.hasWhitespaceCharacter(r.children[0].value)&&!r.firstChild.hasLeadingSpaces&&!r.firstChild.hasTrailingSpaces&&r.isLeadingSpaceSensitive&&!r.hasLeadingSpaces&&r.isTrailingSpaceSensitive&&!r.hasTrailingSpaces&&r.prev?.kind==="text"&&r.next?.kind==="text";e.walk(r=>{if(r.children)for(let n=0;n<r.children.length;n++){let i=r.children[n];if(!t(i))continue;let s=i.prev,a=i.next;s.value+=`<${i.rawName}>`+i.firstChild.value+`</${i.rawName}>`+a.value,s.sourceSpan=new p(s.sourceSpan.start,a.sourceSpan.end),s.isTrailingSpaceSensitive=a.isTrailingSpaceSensitive,s.hasTrailingSpaces=a.hasTrailingSpaces,r.removeChild(i),n--,r.removeChild(a)}})}function vo(e,t){if(t.parser==="html")return;let r=/\{\{(.+?)\}\}/s;e.walk(n=>{if(rn(n,t))for(let i of n.children){if(i.kind!=="text")continue;let s=i.sourceSpan.start,a,o=i.value.split(r);for(let l=0;l<o.length;l++,s=a){let c=o[l];if(l%2===0){a=s.moveBy(c.length),c.length>0&&n.insertChildBefore(i,{kind:"text",value:c,sourceSpan:new p(s,a)});continue}a=s.moveBy(c.length+4),n.insertChildBefore(i,{kind:"interpolation",sourceSpan:new p(s,a),children:c.length===0?[]:[{kind:"text",value:c,sourceSpan:new p(s.moveBy(2),a.moveBy(-2))}]})}n.removeChild(i)}})}function Co(e,t){e.walk(r=>{let n=r.$children;if(!n)return;if(n.length===0||n.length===1&&n[0].kind==="text"&&P.trim(n[0].value).length===0){r.hasDanglingSpaces=n.length>0,r.$children=[];return}let i=nn(r,t),s=tr(r);if(!i)for(let a=0;a<n.length;a++){let o=n[a];if(o.kind!=="text")continue;let{leadingWhitespace:l,text:c,trailingWhitespace:u}=tn(o.value),d=o.prev,_=o.next;c?(o.value=c,o.sourceSpan=new p(o.sourceSpan.start.moveBy(l.length),o.sourceSpan.end.moveBy(-u.length)),l&&(d&&(d.hasTrailingSpaces=!0),o.hasLeadingSpaces=!0),u&&(o.hasTrailingSpaces=!0,_&&(_.hasLeadingSpaces=!0))):(r.removeChild(o),a--,(l||u)&&(d&&(d.hasTrailingSpaces=!0),_&&(_.hasLeadingSpaces=!0)))}r.isWhitespaceSensitive=i,r.isIndentationSensitive=s})}function ko(e){e.walk(t=>{t.isSelfClosing=!t.children||t.kind==="element"&&(t.tagDefinition.isVoid||t.endSourceSpan&&t.startSourceSpan.start===t.endSourceSpan.start&&t.startSourceSpan.end===t.endSourceSpan.end)})}function bo(e,t){e.walk(r=>{r.kind==="element"&&(r.hasHtmComponentClosingTag=r.endSourceSpan&&/^<\s*\/\s*\/\s*>$/.test(t.originalText.slice(r.endSourceSpan.start.offset,r.endSourceSpan.end.offset)))})}function wo(e,t){e.walk(r=>{r.cssDisplay=fn(r,t)})}function To(e,t){e.walk(r=>{let{children:n}=r;if(n){if(n.length===0){r.isDanglingSpaceSensitive=on(r,t);return}for(let i of n)i.isLeadingSpaceSensitive=sn(i,t),i.isTrailingSpaceSensitive=an(i,t);for(let i=0;i<n.length;i++){let s=n[i];s.isLeadingSpaceSensitive=(i===0||s.prev.isTrailingSpaceSensitive)&&s.isLeadingSpaceSensitive,s.isTrailingSpaceSensitive=(i===n.length-1||s.next.isLeadingSpaceSensitive)&&s.isTrailingSpaceSensitive}}})}var Fi=ho;function yo(e,t,r){let{node:n}=e;switch(n.kind){case"root":return t.__onHtmlRoot&&t.__onHtmlRoot(n),[C(Ae(e,t,r)),k];case"element":case"ieConditionalComment":return li(e,t,r);case"angularControlFlowBlock":return ni(e,t,r);case"angularControlFlowBlockParameters":return si(e,t,r);case"angularControlFlowBlockParameter":return P.trim(n.expression);case"angularLetDeclaration":return C(["@let ",C([n.id," =",C(A([S,r("init")]))]),";"]);case"angularLetDeclarationInitializer":return n.value;case"angularIcuExpression":return ai(e,t,r);case"angularIcuCase":return oi(e,t,r);case"ieConditionalStartComment":case"ieConditionalEndComment":return[me(n),ue(n)];case"interpolation":return[me(n,t),...e.map(r,"children"),ue(n,t)];case"text":{if(n.parent.kind==="interpolation"){let o=/\n[^\S\n]*$/,l=o.test(n.value),c=l?n.value.replace(o,""):n.value;return[L(c),l?k:""]}let i=B(n,t),s=yt(n),a=M(n,t);return s[0]=[i,s[0]],s.push([s.pop(),a]),_t(s)}case"docType":return[C([me(n,t)," ",T(0,n.value.replace(/^html\b/i,"html"),/\s+/g," ")]),ue(n,t)];case"comment":return[B(n,t),L(t.originalText.slice(F(n),Z(n))),M(n,t)];case"attribute":{if(n.value===null)return n.rawName;let i=ir(n.value),s=xt(n,t)?"":Wr(i,'"');return[n.rawName,"=",s,L(s==='"'?T(0,i,'"',"&quot;"):T(0,i,"'","&apos;")),s]}case"startTagComment":return ci(e);default:throw new Gr(n,"HTML")}}var Eo={features:{experimental_frontMatterSupport:{massageAstNode:!0,embed:!0,print:!0}},preprocess:Fi,print:yo,insertPragma:ei,massageAstNode:lr,embed:Gn,getVisitorKeys:Yn},Vi=Eo;var Ui=[{name:"Angular",type:"markup",aceMode:"html",extensions:[".component.html"],tmScope:"text.html.basic",aliases:["xhtml"],codemirrorMode:"htmlmixed",codemirrorMimeType:"text/html",parsers:["angular"],vscodeLanguageIds:["html"],filenames:[],linguistLanguageId:146},{name:"HTML",type:"markup",aceMode:"html",extensions:[".html",".hta",".htm",".html.hl",".inc",".xht",".xhtml"],tmScope:"text.html.basic",aliases:["xhtml"],codemirrorMode:"htmlmixed",codemirrorMimeType:"text/html",parsers:["html"],vscodeLanguageIds:["html"],linguistLanguageId:146},{name:"Lightning Web Components",type:"markup",aceMode:"html",extensions:[],tmScope:"text.html.basic",aliases:["LWC","lwc"],codemirrorMode:"htmlmixed",codemirrorMimeType:"text/html",parsers:["lwc"],vscodeLanguageIds:["html"],filenames:[],linguistLanguageId:146},{name:"MJML",type:"markup",aceMode:"html",extensions:[".mjml"],tmScope:"text.mjml.basic",aliases:["MJML","mjml"],codemirrorMode:"htmlmixed",codemirrorMimeType:"text/html",parsers:["mjml"],filenames:[],vscodeLanguageIds:["mjml"],linguistLanguageId:146},{name:"Vue",type:"markup",aceMode:"vue",extensions:[".vue"],tmScope:"text.html.vue",codemirrorMode:"vue",codemirrorMimeType:"text/x-vue",parsers:["vue"],vscodeLanguageIds:["vue"],linguistLanguageId:391}];var wr={bracketSpacing:{category:"Common",type:"boolean",default:!0,description:"Print spaces between brackets.",oppositeDescription:"Do not print spaces between brackets."},objectWrap:{category:"Common",type:"choice",default:"preserve",description:"How to wrap object literals.",choices:[{value:"preserve",description:"Keep as multi-line, if there is a newline between the opening brace and first property."},{value:"collapse",description:"Fit to a single line when possible."}]},singleQuote:{category:"Common",type:"boolean",default:!1,description:"Use single quotes instead of double quotes."},proseWrap:{category:"Common",type:"choice",default:"preserve",description:"How to wrap prose.",choices:[{value:"always",description:"Wrap prose if it exceeds the print width."},{value:"never",description:"Do not wrap prose."},{value:"preserve",description:"Wrap prose as-is."}]},bracketSameLine:{category:"Common",type:"boolean",default:!1,description:"Put > of opening tags on the last line instead of on a new line."},singleAttributePerLine:{category:"Common",type:"boolean",default:!1,description:"Enforce single attribute per line in HTML, Vue and JSX."}};var Wi="HTML",xo={bracketSameLine:wr.bracketSameLine,htmlWhitespaceSensitivity:{category:Wi,type:"choice",default:"css",description:"How to handle whitespaces in HTML.",choices:[{value:"css",description:"Respect the default value of CSS display property."},{value:"strict",description:"Whitespaces are considered sensitive."},{value:"ignore",description:"Whitespaces are considered insensitive."}]},singleAttributePerLine:wr.singleAttributePerLine,vueIndentScriptAndStyle:{category:Wi,type:"boolean",default:!1,description:"Indent script and style tags in Vue files."}},zi=xo;var Nr={};Ir(Nr,{angular:()=>jo,html:()=>zo,lwc:()=>Ko,mjml:()=>$o,vue:()=>Yo});function Lo(e,t){let r=new SyntaxError(e+" ("+t.loc.start.line+":"+t.loc.start.column+")");return Object.assign(r,t)}var Gi=Lo;var Ao={canSelfClose:!0,normalizeTagName:!1,normalizeAttributeName:!1,allowHtmComponentClosingTags:!1,allowStartTagComments:!1,isTagNameCaseSensitive:!1,shouldParseFrontMatter:!0};function qt(e){return{...Ao,...e}}function Tr(e){let{canSelfClose:t,allowHtmComponentClosingTags:r,allowStartTagComments:n,isTagNameCaseSensitive:i,shouldParseAsRawText:s,tokenizeAngularBlocks:a,tokenizeAngularLetDeclaration:o}=e;return{canSelfClose:t,allowHtmComponentClosingTags:r,allowStartTagComments:n,isTagNameCaseSensitive:i,getTagContentType:s?(...l)=>s(...l)?cr.RAW_TEXT:void 0:void 0,tokenizeAngularBlocks:a,tokenizeAngularLetDeclaration:o}}var Ht=new Map([["*",new Set(["accesskey","autocapitalize","autocorrect","autofocus","class","contenteditable","dir","draggable","enterkeyhint","exportparts","hidden","id","inert","inputmode","is","itemid","itemprop","itemref","itemscope","itemtype","lang","nonce","part","popover","slot","spellcheck","style","tabindex","title","translate","writingsuggestions"])],["a",new Set(["charset","coords","download","href","hreflang","name","ping","referrerpolicy","rel","rev","shape","target","type"])],["applet",new Set(["align","alt","archive","code","codebase","height","hspace","name","object","vspace","width"])],["area",new Set(["alt","coords","download","href","hreflang","nohref","ping","referrerpolicy","rel","shape","target","type"])],["audio",new Set(["autoplay","controls","crossorigin","loop","muted","preload","src"])],["base",new Set(["href","target"])],["basefont",new Set(["color","face","size"])],["blockquote",new Set(["cite"])],["body",new Set(["alink","background","bgcolor","link","text","vlink"])],["br",new Set(["clear"])],["button",new Set(["command","commandfor","disabled","form","formaction","formenctype","formmethod","formnovalidate","formtarget","name","popovertarget","popovertargetaction","type","value"])],["canvas",new Set(["height","width"])],["caption",new Set(["align"])],["col",new Set(["align","char","charoff","span","valign","width"])],["colgroup",new Set(["align","char","charoff","span","valign","width"])],["data",new Set(["value"])],["del",new Set(["cite","datetime"])],["details",new Set(["name","open"])],["dialog",new Set(["closedby","open"])],["dir",new Set(["compact"])],["div",new Set(["align"])],["dl",new Set(["compact"])],["embed",new Set(["height","src","type","width"])],["fieldset",new Set(["disabled","form","name"])],["font",new Set(["color","face","size"])],["form",new Set(["accept","accept-charset","action","autocomplete","enctype","method","name","novalidate","target"])],["frame",new Set(["frameborder","longdesc","marginheight","marginwidth","name","noresize","scrolling","src"])],["frameset",new Set(["cols","rows"])],["h1",new Set(["align"])],["h2",new Set(["align"])],["h3",new Set(["align"])],["h4",new Set(["align"])],["h5",new Set(["align"])],["h6",new Set(["align"])],["head",new Set(["profile"])],["hr",new Set(["align","noshade","size","width"])],["html",new Set(["manifest","version"])],["iframe",new Set(["align","allow","allowfullscreen","allowpaymentrequest","allowusermedia","frameborder","height","loading","longdesc","marginheight","marginwidth","name","referrerpolicy","sandbox","scrolling","src","srcdoc","width"])],["img",new Set(["align","alt","border","crossorigin","decoding","fetchpriority","height","hspace","ismap","loading","longdesc","name","referrerpolicy","sizes","src","srcset","usemap","vspace","width"])],["input",new Set(["accept","align","alpha","alt","autocomplete","checked","colorspace","dirname","disabled","form","formaction","formenctype","formmethod","formnovalidate","formtarget","height","ismap","list","max","maxlength","min","minlength","multiple","name","pattern","placeholder","popovertarget","popovertargetaction","readonly","required","size","src","step","type","usemap","value","width"])],["ins",new Set(["cite","datetime"])],["isindex",new Set(["prompt"])],["label",new Set(["for","form"])],["legend",new Set(["align"])],["li",new Set(["type","value"])],["link",new Set(["as","blocking","charset","color","crossorigin","disabled","fetchpriority","href","hreflang","imagesizes","imagesrcset","integrity","media","referrerpolicy","rel","rev","sizes","target","type"])],["map",new Set(["name"])],["menu",new Set(["compact"])],["meta",new Set(["charset","content","http-equiv","media","name","scheme"])],["meter",new Set(["high","low","max","min","optimum","value"])],["object",new Set(["align","archive","border","classid","codebase","codetype","data","declare","form","height","hspace","name","standby","type","typemustmatch","usemap","vspace","width"])],["ol",new Set(["compact","reversed","start","type"])],["optgroup",new Set(["disabled","label"])],["option",new Set(["disabled","label","selected","value"])],["output",new Set(["for","form","name"])],["p",new Set(["align"])],["param",new Set(["name","type","value","valuetype"])],["pre",new Set(["width"])],["progress",new Set(["max","value"])],["q",new Set(["cite"])],["script",new Set(["async","blocking","charset","crossorigin","defer","fetchpriority","integrity","language","nomodule","referrerpolicy","src","type"])],["select",new Set(["autocomplete","disabled","form","multiple","name","required","size"])],["slot",new Set(["name"])],["source",new Set(["height","media","sizes","src","srcset","type","width"])],["style",new Set(["blocking","media","type"])],["table",new Set(["align","bgcolor","border","cellpadding","cellspacing","frame","rules","summary","width"])],["tbody",new Set(["align","char","charoff","valign"])],["td",new Set(["abbr","align","axis","bgcolor","char","charoff","colspan","headers","height","nowrap","rowspan","scope","valign","width"])],["template",new Set(["shadowrootclonable","shadowrootcustomelementregistry","shadowrootdelegatesfocus","shadowrootmode","shadowrootserializable"])],["textarea",new Set(["autocomplete","cols","dirname","disabled","form","maxlength","minlength","name","placeholder","readonly","required","rows","wrap"])],["tfoot",new Set(["align","char","charoff","valign"])],["th",new Set(["abbr","align","axis","bgcolor","char","charoff","colspan","headers","height","nowrap","rowspan","scope","valign","width"])],["thead",new Set(["align","char","charoff","valign"])],["time",new Set(["datetime"])],["tr",new Set(["align","bgcolor","char","charoff","valign"])],["track",new Set(["default","kind","label","src","srclang"])],["ul",new Set(["compact","type"])],["video",new Set(["autoplay","controls","crossorigin","height","loop","muted","playsinline","poster","preload","src","width"])]]);var $i=new Set(["a","abbr","acronym","address","applet","area","article","aside","audio","b","base","basefont","bdi","bdo","bgsound","big","blink","blockquote","body","br","button","canvas","caption","center","cite","code","col","colgroup","command","content","data","datalist","dd","del","details","dfn","dialog","dir","div","dl","dt","em","embed","fencedframe","fieldset","figcaption","figure","font","footer","form","frame","frameset","geolocation","h1","h2","h3","h4","h5","h6","head","header","hgroup","hr","html","i","iframe","image","img","input","ins","isindex","kbd","keygen","label","legend","li","link","listing","main","map","mark","marquee","math","menu","menuitem","meta","meter","multicol","nav","nextid","nobr","noembed","noframes","noscript","object","ol","optgroup","option","output","p","param","picture","plaintext","pre","progress","q","rb","rbc","rp","rt","rtc","ruby","s","samp","script","search","section","select","selectedcontent","shadow","slot","small","source","spacer","span","strike","strong","style","sub","summary","sup","svg","table","tbody","td","template","textarea","tfoot","th","thead","time","title","tr","track","tt","u","ul","var","video","wbr","xmp"]);var Ft={attrs:!0,children:!0,cases:!0,expression:!0},ji=new Set(["parent"]),ie,yr,Er,Me=class Me{constructor(t={}){Rr(this,ie);zt(this,"kind");zt(this,"parent");for(let r of new Set([...ji,...Object.keys(t)]))this.setProperty(r,t[r]);if(ae(t))for(let r of Object.getOwnPropertySymbols(t))this.setProperty(r,t[r])}setProperty(t,r){if(this[t]!==r){if(t in Ft&&(r=r.map(n=>this.createChild(n))),!ji.has(t)){this[t]=r;return}Object.defineProperty(this,t,{value:r,enumerable:!1,configurable:!0})}}map(t){let r;for(let n in Ft){let i=this[n];if(i){let s=Po(i,a=>a.map(t));r!==i&&(r??(r=new Me({parent:this.parent})),r.setProperty(n,s))}}if(r)for(let n in this)n in Ft||(r[n]=this[n]);return t(r||this)}walk(t){for(let r in Ft){let n=this[r];if(n)for(let i=0;i<n.length;i++)n[i].walk(t)}t(this)}createChild(t){let r=t instanceof Me?t.clone():new Me(t);return r.setProperty("parent",this),r}insertChildBefore(t,r){let n=this.$children;n.splice(n.indexOf(t),0,this.createChild(r))}removeChild(t){let r=this.$children;r.splice(r.indexOf(t),1)}replaceChild(t,r){let n=this.$children;n[n.indexOf(t)]=this.createChild(r)}clone(){return new Me(this)}get $children(){return this[qe(this,ie,yr)]}set $children(t){this[qe(this,ie,yr)]=t}get firstChild(){return this.$children?.[0]}get lastChild(){return I(1,this.$children,-1)}get prev(){let t=qe(this,ie,Er);return t[t.indexOf(this)-1]}get next(){let t=qe(this,ie,Er);return t[t.indexOf(this)+1]}get rawName(){return this.hasExplicitNamespace?this.fullName:this.name}get fullName(){return this.namespace?this.namespace+":"+this.name:this.name}get attrMap(){return Object.fromEntries(this.attrs.map(t=>[t.fullName,t.value]))}};ie=new WeakSet,yr=function(){return this.kind==="angularIcuCase"?"expression":this.kind==="angularIcuExpression"?"cases":"children"},Er=function(){return this.parent?.$children??[]};var Vt=Me;function Po(e,t){let r=e.map(t);return r.some((n,i)=>n!==e[i])?r:e}var No=[{regex:/^(?<openingTagSuffix>\[if(?<condition>[^\]]*)\]>)(?<data>.*?)<!\s*\[endif\]$/s,parse:Do},{regex:/^\[if(?<condition>[^\]]*)\]><!$/,parse:Io},{regex:/^<!\s*\[endif\]$/,parse:Ro}];function Yi(e,t){if(e.value)for(let{regex:r,parse:n}of No){let i=e.value.match(r);if(i)return n(e,i,t)}return null}function Do(e,t,r){let{openingTagSuffix:n,condition:i,data:s}=t.groups,a=4+n.length,o=e.sourceSpan.start.moveBy(a),l=o.moveBy(s.length),[c,u]=(()=>{try{return[!0,r(s,o).children]}catch{return[!1,[{kind:"text",value:s,sourceSpan:new p(o,l)}]]}})();return{kind:"ieConditionalComment",complete:c,children:u,condition:T(0,i.trim(),/\s+/g," "),sourceSpan:e.sourceSpan,startSourceSpan:new p(e.sourceSpan.start,o),endSourceSpan:new p(l,e.sourceSpan.end)}}function Io(e,t){let{condition:r}=t.groups;return{kind:"ieConditionalStartComment",condition:T(0,r.trim(),/\s+/g," "),sourceSpan:e.sourceSpan}}function Ro(e){return{kind:"ieConditionalEndComment",sourceSpan:e.sourceSpan}}var xr=class extends _r{visitExpansionCase(t,r){r.parseOptions.name==="angular"&&this.visitChildren(r,n=>{n(t.expression)})}visit(t,{parseOptions:r}){qo(t),Ho(t,r),Vo(t,r),Fo(t)}};function Xi(e,t,r,n){let i=r.name==="angular";Rt(new xr,e.children,{parseOptions:r}),t&&e.children.unshift(t);let s=new Vt(e);return s.walk(a=>{if(a.kind==="comment"){let o=Yi(a,n);o&&a.parent.replaceChild(a,o)}else i&&a.kind==="element"&&a.comments&&(a.startTagComments=a.comments,delete a.comments);i&&(Oo(a),Mo(a),Bo(a))}),s}function Oo(e){if(e.kind==="block"){if(e.name=T(0,e.name.toLowerCase(),/\s+/g," ").trim(),e.kind="angularControlFlowBlock",!J(e.parameters)){delete e.parameters;return}for(let t of e.parameters)t.kind="angularControlFlowBlockParameter";e.parameters={kind:"angularControlFlowBlockParameters",children:e.parameters,sourceSpan:new p(e.parameters[0].sourceSpan.start,I(0,e.parameters,-1).sourceSpan.end)}}}function Mo(e){e.kind==="letDeclaration"&&(e.kind="angularLetDeclaration",e.id=e.name,e.init={kind:"angularLetDeclarationInitializer",sourceSpan:new p(e.valueSpan.start,e.valueSpan.end),value:e.value},delete e.name,delete e.value)}function Bo(e){e.kind==="expansion"&&(e.kind="angularIcuExpression"),e.kind==="expansionCase"&&(e.kind="angularIcuCase")}function Ki(e,t){let r=e.toLowerCase();return t(r)?r:e}function Qi(e){let t=e.name.startsWith(":")?e.name.slice(1).split(":",1)[0]:null,r=e.nameSpan.toString(),n=t!==null&&r.startsWith(`${t}:`),i=n?r.slice(t.length+1):r;e.name=i,e.namespace=t,e.hasExplicitNamespace=n}function qo(e){switch(e.kind){case"element":Qi(e);for(let t of e.attrs)Qi(t),t.valueSpan?(t.value=t.valueSpan.toString(),/["']/.test(t.value[0])&&(t.value=t.value.slice(1,-1))):t.value=null;break;case"comment":e.value=e.sourceSpan.toString().slice(4,-3);break;case"text":e.value=e.sourceSpan.toString();break}}function Ho(e,t){if(e.kind==="element"){let r=Ne(t.isTagNameCaseSensitive?e.name:e.name.toLowerCase());!e.namespace||e.namespace===r.implicitNamespacePrefix||oe(e)?e.tagDefinition=r:e.tagDefinition=Ne("")}}function Fo(e){e.sourceSpan&&e.endSourceSpan&&(e.sourceSpan=new p(e.sourceSpan.start,e.endSourceSpan.end))}function Vo(e,t){if(e.kind==="element"&&(t.normalizeTagName&&(!e.namespace||e.namespace===e.tagDefinition.implicitNamespacePrefix||oe(e))&&(e.name=Ki(e.name,r=>$i.has(r))),t.normalizeAttributeName))for(let r of e.attrs)r.namespace||(r.name=Ki(r.name,n=>Ht.has(e.name)&&(Ht.get("*").has(n)||Ht.get(e.name).has(n))))}function Ar(e,t){let{rootNodes:r,errors:n}=Bt(e,Tr(t));return n.length>0&&Lr(n[0]),{parseOptions:t,rootNodes:r}}function Ji(e,t){let r=Tr(t),{rootNodes:n,errors:i}=Bt(e,r);if(n.some(c=>c.kind==="docType"&&c.value==="html"||c.kind==="element"&&c.name.toLowerCase()==="html"))return Ar(e,Ut);let a,o=()=>a??(a=Bt(e,{...r,getTagContentType:void 0})),l=c=>{let{offset:u}=c.startSourceSpan.start;return o().rootNodes.find(d=>d.kind==="element"&&d.startSourceSpan.start.offset===u)??c};for(let[c,u]of n.entries())if(u.kind==="element"){if(u.isVoid)i=o().errors,n[c]=l(u);else if(Uo(u)){let{endSourceSpan:d,startSourceSpan:_}=u,h=o().errors.find(f=>f.span.start.offset>_.start.offset&&f.span.start.offset<d.end.offset);h&&Lr(h),n[c]=l(u)}}return i.length>0&&Lr(i[0]),{parseOptions:t,rootNodes:n}}function Uo(e){if(e.kind!=="element"||e.name!=="template")return!1;let t=e.attrs.find(r=>r.name==="lang")?.value;return!t||t==="html"}function Lr(e){let{msg:t,span:{start:r,end:n}}=e;throw Gi(t,{loc:{start:{line:r.line+1,column:r.col+1},end:{line:n.line+1,column:n.col+1}},cause:e})}function Wo(e,t,r,n,i,s){let{offset:a}=n,o=Ct(t.slice(0,a))+r,l=Pr(o,e,{...i,shouldParseFrontMatter:!1},s);l.sourceSpan=new p(n,I(0,l.children,-1).sourceSpan.end);let c=l.children[0];return c.length===a?l.children.shift():(c.sourceSpan=new p(c.sourceSpan.start.moveBy(a),c.sourceSpan.end),c.value=c.value.slice(a)),l}function Pr(e,t,r,n={}){let{frontMatter:i,content:s}=r.shouldParseFrontMatter?Xt(e):{content:e},a=new rt(e,n.filepath),o=new De(a,0,0,0),l=o.moveBy(e.length),{parseOptions:c,rootNodes:u}=t(s,r),d={kind:"root",sourceSpan:new p(o,l),children:u},_;if(i){let[f,g]=[i.start,i.end].map(v=>new De(a,v.index,v.line-1,v.column));_={...i,kind:"frontMatter",sourceSpan:new p(f,g)}}return Xi(d,_,c,(f,g)=>Wo(t,e,f,g,c,n))}var Ut=qt({name:"html",normalizeTagName:!0,normalizeAttributeName:!0,allowHtmComponentClosingTags:!0});function st(e){let t=qt(e),r=t.name==="vue"?Ji:Ar;return{parse:(n,i)=>Pr(n,r,t,i),hasPragma:Jn,hasIgnorePragma:Zn,astFormat:"html",locStart:F,locEnd:Z}}var zo=st(Ut),Go=new Set(["mj-style","mj-raw"]),$o=st({...Ut,name:"mjml",shouldParseAsRawText:e=>Go.has(e)}),jo=st({name:"angular",tokenizeAngularBlocks:!0,tokenizeAngularLetDeclaration:!0,allowStartTagComments:!0}),Yo=st({name:"vue",isTagNameCaseSensitive:!0,shouldParseAsRawText(e,t,r,n){return e.toLowerCase()!=="html"&&!r&&(e!=="template"||n.some(({name:i,value:s})=>i==="lang"&&s!=="html"&&s!==""&&s!==void 0))}}),Ko=st({name:"lwc",canSelfClose:!1});var Qo={html:Vi};return is(Xo);});</script>
 <script id="plugin-app">
   const $ = (id) => document.getElementById(id);
-  const GEMINI_MODEL = 'gemini-3.8-flash';
-  $('gemini-model').textContent = GEMINI_MODEL;
 
   let html = '', fonts = {}, colors = {}, devW = 1280;
   let skeleton = '', sprite = '', imgUrls = {}, frameW = 0, frameH = 0;
   let formattedPage = '';
   let references = [], mergePending = false;
   let generationReady = false, compiledCss = '';
+  let backendLimit = 2000000;
   let generationRun = '', generationStarted = 0, eventQueue = Promise.resolve(), downloadUrl = '';
   const newRun = () => Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
-  function saveGeminiSettings() {
-    parent.postMessage({ pluginMessage: {
-      type: 'save-gemini-settings',
-      settings: { apiKey: $('gemini-key').value.trim(), enabled: $('ai').checked }
-    } }, '*');
-    $('ai-status').textContent = $('gemini-key').value.trim() ? 'Saved locally' : 'Add a key to enable AI polish';
-  }
-  $('save-gemini').onclick = saveGeminiSettings;
-  $('ai').addEventListener('change', saveGeminiSettings);
-
-  function tokenCounts(source) {
-    const counts = new Map();
-    for (const token of String(source).match(/__IMG_[A-Za-z0-9_-]+__/g) || []) counts.set(token, (counts.get(token) || 0) + 1);
-    return counts;
-  }
-  function sameTokens(left, right) {
-    const a = tokenCounts(left), b = tokenCounts(right);
-    return a.size === b.size && [...a].every(([key, count]) => b.get(key) === count);
-  }
-  async function improveWithGemini(markup) {
-    const apiKey = $('gemini-key').value.trim();
-    if (!apiKey) throw new Error('Gemini skipped: save a rotated API key in Gemini AI settings.');
-    const prompt = `You are a senior frontend engineer repairing HTML generated from matching mobile and desktop Figma frames.
-Return JSON with one field named html containing only the improved body fragment.
-
-Hard requirements:
-- Preserve every visible element, exact text, SVG sprite marker, __IMG_*__ token, accessibility attribute and element order unless responsive reordering is required.
-- Use only semantic HTML and Tailwind utility classes. Never emit <style>, <script>, inline style attributes, CSS declarations, or external libraries.
-- Never use absolute or fixed positioning. Rebuild layout with flex, grid, gap, padding, margin, width, max-width, aspect-ratio and order utilities.
-- Mobile-first base classes are mandatory. Use sm:, md:, lg:, xl: and 2xl: for progressive device-specific changes inferred from the supplied designs.
-- Prevent horizontal page overflow with min-w-0, max-w-full, flex-wrap, break-words and fluid widths where needed. Do not use overflow-x-hidden to hide broken layout.
-- Keep desktop proportions at xl/2xl while making 320px through 1536px widths usable.
-- Do not invent copy, images or sections. Do not remove Tailwind arbitrary values that preserve measured Figma colors, dimensions, gradients or shadows.
-
-HTML:
-${markup}`;
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`, {
-      method: 'POST',
-      signal: AbortSignal.timeout(90000),
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': apiKey },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.15,
-          maxOutputTokens: 65536,
-          responseMimeType: 'application/json',
-          responseSchema: { type: 'OBJECT', required: ['html'], properties: { html: { type: 'STRING' } } }
-        }
-      })
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error && data.error.message || 'Gemini HTTP ' + response.status);
-    const text = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts || []).map((part) => part.text || '').join('');
-    let result;
-    try { result = JSON.parse(text).html; } catch (_) { throw new Error('Gemini returned invalid structured HTML.'); }
-    if (!result || /<\/?(?:style|script)\b|\sstyle\s*=/i.test(result)) throw new Error('Gemini output contained custom CSS or scripts.');
-    const parsed = new DOMParser().parseFromString(result, 'text/html');
-    if (!parsed.body.firstElementChild || parsed.querySelector('parsererror')) throw new Error('Gemini returned invalid HTML.');
-    const positioned = [...parsed.querySelectorAll('[class]')].some((node) => [...node.classList].some((token) => /(?:^|:)(?:absolute|fixed)$/.test(token)));
-    if (positioned) throw new Error('Gemini output used forbidden absolute positioning.');
-    if (!sameTokens(markup, result)) throw new Error('Gemini changed required image asset tokens.');
-    return result;
-  }
   function backendUrl() {
     const url = new URL($('apiurl').value.trim());
     if (url.protocol !== 'https:' && !(url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname))) throw new Error('Use an HTTPS backend URL or localhost for development.');
@@ -351,6 +275,23 @@ ${markup}`;
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || 'Backend HTTP ' + response.status);
     return data;
+  }
+  async function probeBackend() {
+    const ai = $('ai'), status = $('ai-status');
+    try {
+      const response = await fetch(backendUrl() + '/api/health', { signal: AbortSignal.timeout(6000) });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'HTTP ' + response.status);
+      backendLimit = Number(data.maxHtmlChars) || backendLimit;
+      ai.disabled = !data.ai?.enabled;
+      ai.checked = !!data.ai?.enabled;
+      status.textContent = data.ai?.enabled ? `AI: ${data.ai.model} (server-side)` : 'AI: not configured — deterministic engine active';
+      $('backend-status').textContent = 'Backend connected';
+    } catch (error) {
+      ai.disabled = true; ai.checked = false;
+      status.textContent = 'AI: backend unavailable';
+      $('backend-status').textContent = 'Backend unavailable: ' + error.message;
+    }
   }
   function reportActivity(kind, runId, phase, stage, extra = {}) {
     $('pipeline-status').textContent = stage;
@@ -372,6 +313,7 @@ ${markup}`;
     parent.postMessage({ pluginMessage: { type: 'save-backend-settings', settings: { url: $('apiurl').value.trim(), logging: $('logbackend').checked } } }, '*');
   }
   for (const id of ['apiurl', 'logbackend']) $(id).addEventListener('change', saveConnection);
+  $('apiurl').addEventListener('change', probeBackend);
   $('dashboard').onclick = () => {
     try { parent.postMessage({ pluginMessage: { type: 'open-dashboard', url: backendUrl() } }, '*'); }
     catch (error) { showErr(error.message); }
@@ -395,7 +337,7 @@ ${markup}`;
     return prettier.format(source, { parser: 'html', plugins: prettierPlugins, tabWidth: 2, printWidth: 100, htmlWhitespaceSensitivity: 'ignore' });
   }
   function fullPage() {
-    return '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Design</title>\n  ' + fontLinks() + '<style data-compiled>' + compiledCss + '</style>\n  ' + '</head>\n<body class="m-0">\n' + html + '</body>\n</html>';
+    return '<!DOCTYPE html>\n<html lang="en" class="max-w-full overflow-x-hidden">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Design</title>\n  ' + fontLinks() + '<style data-compiled>' + compiledCss + '</style>\n  ' + '</head>\n<body class="m-0 max-w-full overflow-x-hidden">\n' + html + '</body>\n</html>';
   }
   function copy(text) {
     const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
@@ -409,7 +351,7 @@ ${markup}`;
   let previewObserver;
   function layoutPreview() {
     const stage = $('stage'), f = $('prev'), fr = $('frame');
-    const availW = Math.max(1, stage.clientWidth - 32), availH = Math.max(1, stage.clientHeight - 32);
+    const availW = Math.max(1, stage.clientWidth - 34), availH = Math.max(1, stage.clientHeight - 32);
     const k = Math.min(1, availW / devW);
     f.style.width = devW + 'px';
     const body = f.contentDocument && f.contentDocument.body;
@@ -549,8 +491,6 @@ ${markup}`;
   const VIEWPORTS = [0, 640, 768, 1024, 1280, 1536];
   const VARIANTS = ['', 'sm:', 'md:', 'lg:', 'xl:', '2xl:'];
   function utilityGroup(token) {
-    const arbitraryProperty = token.match(/^\[([a-z-]+):/);
-    if (arbitraryProperty) return arbitraryProperty[1];
     if (/^(block|inline|inline-block|flex|inline-flex|grid|hidden)$/.test(token)) return 'display';
     if (/^(relative|absolute|fixed|static|sticky)$/.test(token)) return 'position';
     if (/^text-\[(?:[\d.]+)(?:px|rem|em)\]$|^text-(xs|sm|base|lg|[2-9]?xl)$/.test(token)) return 'font-size';
@@ -621,7 +561,7 @@ ${markup}`;
         if (group === 'grid-cols' && maps.length === 2 && active === 0 && i > 2 && starts[1] > i && previous === 'grid-cols-2') value = previous;
         if (maps.length === 2 && active === 0 && i > 0 && i < starts[1] && (group === 'font-size' || group === 'leading' || /^(?:p[trbl]|gap(?:-[xy])?)$/.test(group))) {
           const mobile = numericUtility(maps[0].get(group), group), desktop = numericUtility(maps[1].get(group), group);
-          const progress = i / starts[1];
+          const progress = i / (starts[1] + 1);
           if (mobile !== null && desktop !== null && mobile !== desktop) value = `${group === 'font-size' ? 'text' : group}-[${Math.round(mobile + (desktop - mobile) * progress)}px]`;
         }
         // Inherit between measured layouts; do not manufacture classes at every breakpoint.
@@ -654,9 +594,10 @@ ${markup}`;
     const starts = [0];
     for (let i = 1; i < refs.length; i++) {
       const measured = VIEWPORTS.reduce((index, width, j) => width <= refs[i].width ? j : index, 0);
-      starts.push(Math.min(5, Math.max(starts[i - 1] + 1, measured)));
+      starts.push(Math.min(5, Math.max(starts[i - 1] + 1, Math.min(i === refs.length - 1 ? 3 : 4, measured))));
     }
-    let unmatched = 0;
+    const css = [];
+    let counter = 0, unmatched = 0;
     const children = (node) => node ? [...node.children].filter((child) => child.hasAttribute('data-layer')) : [];
     const name = (node) => (node.getAttribute('data-layer') || '').trim().toLowerCase().replace(/\b(?:mobile|desktop|tablet|phone|large|small)\b/g, '').replace(/[\s_/-]+/g, ' ').trim();
     const kind = (node) => /^(?:FRAME|COMPONENT|INSTANCE|GROUP)$/.test(node.getAttribute('data-kind') || '') ? 'CONTAINER' : node.getAttribute('data-kind');
@@ -691,22 +632,16 @@ ${markup}`;
       const source = nodes.filter(Boolean).slice(-1)[0], result = source.cloneNode(true);
       result.removeAttribute('data-layer'); result.removeAttribute('data-kind');
       result.setAttribute('class', mergeClassMaps(nodes.map((node) => classMap(node, root, refs[refs.length - 1].width)), starts));
-      // Convert any legacy inline paint/effect into responsive Tailwind
-      // arbitrary-property utilities. Generated markup never needs custom CSS.
+      // Inline paint/effects need media rules too; one inline style would override every viewport.
       result.removeAttribute('style');
       const styles = nodes.map((node) => node ? node.getAttribute('style') || '' : '');
       if (styles.some(Boolean)) {
+        const id = 'viewport-' + (++counter);
+        result.classList.add(id);
         const properties = new Set(nodes.flatMap((node) => node ? [...node.style] : []));
-        for (const property of properties) {
-          let previous;
-          for (let i = 0; i < VIEWPORTS.length; i++) {
-            let active = 0;
-            while (active + 1 < nodes.length && starts[active + 1] <= i) active++;
-            const value = nodes[active] && nodes[active].style.getPropertyValue(property) || 'initial';
-            if (value !== previous) result.classList.add(VARIANTS[i] + `[${property}:${value.trim().replace(/\s+/g, '_')}]`);
-            previous = value;
-          }
-        }
+        const declarations = (node) => [...properties].map((property) => `${property}:${node && node.style.getPropertyValue(property) || 'initial'}`).join(';');
+        css.push(`.${id}{${declarations(nodes[0])}}`);
+        for (let i = 1; i < nodes.length; i++) if (styles[i] !== styles[i - 1]) css.push(`@media(min-width:${VIEWPORTS[starts[i]]}px){.${id}{${declarations(nodes[i])}}}`);
       }
       const lists = nodes.map(children);
       if (!lists.some((list) => list.length)) return result;
@@ -747,7 +682,7 @@ ${markup}`;
       if (end < 0) return '  '.repeat(depth) + shell;
       return '  '.repeat(depth) + shell.slice(0, end) + '\n' + [...node.children].map((child) => readable(child, depth + 1)).join('\n') + '\n' + '  '.repeat(depth) + shell.slice(end);
     }
-    return { html: readable(merged, 0), unmatched };
+    return { html: (css.length ? '<style>\n' + css.join('\n') + '\n</style>\n' : '') + readable(merged, 0), unmatched };
   }
 
   onmessage = async (e) => {
@@ -755,12 +690,8 @@ ${markup}`;
     if (m.type === 'backend-settings' && m.settings) {
       $('apiurl').value = m.settings.url || $('apiurl').value;
       $('logbackend').checked = m.settings.logging !== false;
-      $('backend-status').textContent = 'Dashboard ready · Generate to send activity';
-    }
-    if (m.type === 'gemini-settings' && m.settings) {
-      $('gemini-key').value = m.settings.apiKey || '';
-      $('ai').checked = m.settings.enabled !== false;
-      $('ai-status').textContent = m.settings.apiKey ? 'Key loaded from local Figma storage' : 'Add a key to enable AI polish';
+      $('backend-status').textContent = 'Dashboard ready - Generate to send activity';
+      probeBackend();
     }
     if (m.type === 'selection') {
       $('dot').classList.toggle('on', m.count > 0);
@@ -801,18 +732,6 @@ ${markup}`;
         mergePending = false;
         if (merged.unmatched) showErr(merged.unmatched + ' layers exist in only one reference or could not be matched. They keep their source viewport visibility. Review those sections in the preview.');
       }
-      if ($('ai').checked) {
-        setLoading(true, 'Gemini is improving responsiveness...');
-        reportGeneration('progress', 'Gemini is reviewing flow layout and Tailwind breakpoints');
-        try {
-          skeleton = await improveWithGemini(skeleton);
-          html = restoreHtml(skeleton);
-          $('ai-status').textContent = 'Gemini polish applied with ' + GEMINI_MODEL;
-        } catch (aiError) {
-          $('ai-status').textContent = aiError.message || String(aiError);
-          toast('Local responsive output kept; Gemini polish was skipped');
-        }
-      }
       if (frameW) {
         devW = frameW;
         $('viewport').value = devW;
@@ -822,9 +741,8 @@ ${markup}`;
       fixMsg = 'Design code compiled by Express';
       reportGeneration('progress', 'Sending responsive markup to Express');
       await eventQueue;
-      // Compile the final classes after image tokens have been expanded so
-      // arbitrary Tailwind background utilities and their selectors agree.
-      const result = await backendRequest('/api/generate', { runId: generationRun, html: restoreHtml(skeleton), theme: configObject().theme.extend });
+      if (skeleton.length > backendLimit) throw new Error(`Generated HTML is ${skeleton.length.toLocaleString()} characters; backend maximum is ${backendLimit.toLocaleString()}. Select smaller matching frames or simplify deeply nested layers.`);
+      const result = await backendRequest('/api/generate', { runId: generationRun, html: skeleton, theme: configObject().theme.extend, ai: $('ai').checked && !$('ai').disabled });
       compiledCss = result.css;
       skeleton = await formatHtml(result.html);
       html = await formatHtml(restoreHtml(skeleton));
@@ -833,13 +751,14 @@ ${markup}`;
       $('empty').style.display = 'none';
       await refreshViews();
       reportGeneration('done', references.length > 1 ? 'Responsive HTML ready' : 'Design HTML ready', { output: skeleton.slice(0, 350000), ms: generationStarted ? Date.now() - generationStarted : 0 });
+      fixMsg = result.ai?.applied ? `Responsive code polished by ${result.ai.model}` : (result.ai?.reason && $('ai').checked ? result.ai.reason : fixMsg);
       if (fixMsg) toast(fixMsg);
       } catch (error) {
         generationReady = false;
         $('zip').disabled = true;
         setLoading(false);
         $('copy').disabled = true; $('copyfull').disabled = true;
-        showErr('Could not combine the selected designs: ' + (error.message || error));
+        showErr('Generation failed: ' + (error.message || error));
         reportGeneration('error', error.message || String(error));
       }
     }
@@ -870,6 +789,7 @@ ${markup}`;
   }
 
   parent.postMessage({ pluginMessage: { type: 'ready' } }, '*');
+  probeBackend();
 </script>
 </body>
 </html>

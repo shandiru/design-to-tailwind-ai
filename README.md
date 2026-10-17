@@ -4,6 +4,6 @@ Figma to responsive HTML + Tailwind with mobile/desktop reference merging, `sm` 
 
 Import `plugin/manifest.json` in Figma. Save mobile and desktop frames separately (or select both), keep **Responsive** enabled, and click **Generate**. The generator uses normal document flow, flex and grid; custom `<style>` blocks and inline styles are not emitted for design markup.
 
-Gemini polish is optional. Rotate any key that has been shared publicly, then paste the replacement into **Gemini AI settings**. It is stored only in Figma `clientStorage`; no `.env` file is required and the key is never written to this repository or generated output. The model identifier is fixed in the plugin source.
+Gemini polish is optional. Configure `GEMINI_API_KEY` only in the backend hosting environment (such as Vercel project settings); no `.env` file is used. The key is never sent to the Figma plugin, stored in generated output, or committed. The backend defaults to `gemini-3.8-flash` and accepts a `GEMINI_MODEL` override. Rotate any credential that has been pasted into chat or shared publicly.
 
-The backend is configured separately in **Backend connection**. Use an HTTPS URL, or `http://localhost:3000` for local development.
+The backend is configured separately in **Backend connection**. Use an HTTPS URL, or `http://localhost:3000` for local development. The plugin enables **Gemini polish** only when backend health reports that AI is configured.
