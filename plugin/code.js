@@ -176,13 +176,13 @@ function absClasses(n, parent, G, fluid = false) {
 function sizeClasses(n, parent, opts, isRoot) {
   const c = [];
   if (opts.exact) {   // Exact mode: Figma-la irukkura x/y/size apdiye
-    if (isRoot || !parent) return ['relative', 'mx-auto', sp('w', n.width), sp('h', n.height)];
+    if (isRoot || !parent) return ['relative', 'mx-auto', sp('w', n.width), 'max-w-full', sp('h', n.height)];
     const auto = parent.layoutMode && parent.layoutMode !== 'NONE' && n.layoutPositioning !== 'ABSOLUTE';
     if (auto) {
       const horizontal = parent.layoutMode === 'HORIZONTAL';
       if (n.layoutSizingHorizontal === 'FILL' || n.layoutGrow === 1) c.push(horizontal ? 'flex-1' : 'w-full');
       else if (n.layoutSizingHorizontal === 'HUG' || n.textAutoResize === 'WIDTH_AND_HEIGHT') c.push('w-fit');
-      else c.push(sp('w', n.width), 'shrink-0');
+      else c.push(sp('w', n.width), 'max-w-full', 'shrink-0');
       if (n.layoutSizingVertical === 'FILL') c.push(horizontal ? 'self-stretch' : 'flex-1');
       else if (n.layoutSizingVertical !== 'HUG' && !(n.type === 'TEXT' && n.textAutoResize === 'HEIGHT')) c.push(sp('h', n.height));
       return c;
@@ -264,7 +264,7 @@ function flexClasses(n, opts, isRoot = false) {
   const c = [], plan = layoutPlan(n);
   const horiz = n.layoutMode === 'HORIZONTAL' || (plan.inferred && plan.rows.length === 1 && plan.rows[0].length > 1);
   const stk = horiz && opts.responsive && n.width >= 600;
-  if (repeatedItems(n) && !opts.annotate && !opts.preserve) c.push('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+  if (repeatedItems(n) && opts.responsive && !opts.annotate && !opts.preserve) c.push('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
   else c.push('flex', ...(stk ? ['flex-col', 'lg:flex-row'] : [horiz ? 'flex-row' : 'flex-col']));
   if (n.layoutWrap === 'WRAP') c.push('flex-wrap');
   let gap = n.itemSpacing;
@@ -554,44 +554,16 @@ async function renderNode(n, parent, opts, depth, ctx) {
 }
 
 const say = (msg) => figma.ui.postMessage({ type: 'progress', msg });
-const referenceSlots = { mobile: null, desktop: null };
 const referenceNode = (n) => n && !n.removed && ['FRAME', 'COMPONENT', 'INSTANCE', 'GROUP', 'SECTION'].includes(n.type);
-function sendReferences() {
-  const slots = {};
-  for (const role of ['mobile', 'desktop']) {
-    const node = referenceSlots[role];
-    slots[role] = referenceNode(node) ? { name: node.name, width: Math.round(node.width) } : null;
-  }
-  figma.ui.postMessage({ type: 'reference-slots', slots });
-}
-
 
 async function generate(opts) {
   opts = { ...opts };
-  opts.exact = !!opts.exact;
-  opts.responsive = !!opts.responsive;
-  // The UI exposes two modes. Responsive is the safe default if an older UI
-  // sends neither flag; Exact always wins when explicitly selected.
-  if (opts.exact) opts.responsive = false;
-  else if (!opts.responsive) opts.responsive = true;
+  opts.exact = true;
+  opts.responsive = false;
   let selection = [...figma.currentPage.selection];
-  // Exact mode always exports the current single selection. Saved responsive
-  // references must never override a pixel-accurate one-frame export.
-  if (!opts.exact && (referenceSlots.mobile || referenceSlots.desktop)) {
-    const { mobile, desktop } = referenceSlots;
-    if (!referenceNode(mobile) || !referenceNode(desktop)) return figma.ui.postMessage({ type: 'error', msg: 'Set both Mobile and Desktop references. Select each design and click its Use selection button, or clear the pair.' });
-    if (mobile.id === desktop.id || mobile.width >= desktop.width) return figma.ui.postMessage({ type: 'error', msg: 'Mobile must be a different, narrower design than Desktop. Update the reference slots.' });
-    selection = [mobile, desktop];
-    opts.responsive = true; opts.exact = false;
-  }
-  // Selecting a component set means selecting its viewport variants.
-  const sel = selection.flatMap((n) => n.type === 'COMPONENT_SET' ? n.children.filter((child) => child.visible !== false) : [n]).sort((a, b) => a.width - b.width);
+  const sel = selection;
   if (!sel.length) return figma.ui.postMessage({ type: 'error', msg: 'Oru Frame select pannunga.' });
-  const multi = sel.length > 1;
-  if (multi && (!opts.responsive || opts.exact)) return figma.ui.postMessage({ type: 'error', msg: 'Enable Responsive to combine mobile, tablet and desktop designs.' });
-  if (multi && (sel.length > 3 || sel.some((n) => !referenceNode(n)) || new Set(sel.map((n) => Math.round(n.width))).size !== sel.length)) {
-    return figma.ui.postMessage({ type: 'error', msg: 'Select 2 or 3 matching designs at different widths: mobile, optional tablet, desktop.' });
-  }
+  if (sel.length !== 1 || !referenceNode(sel[0])) return figma.ui.postMessage({ type: 'error', msg: 'Exact layout-ku one Frame, Section, Component, Instance, or Group mattum select pannunga.' });
   const ctx = { fonts: {}, imgCls: {}, imgN: 0, imgSize: {}, bytes: {}, svgP: {}, syms: {}, symDefs: [], symN: 0, maskCls: {}, maskKey: {}, maskN: 0 };
   try {
     say('Exporting icons & images...');
@@ -603,11 +575,7 @@ async function generate(opts) {
       // merges them. A single Responsive selection uses the fluid layout engine;
       // a single Exact selection keeps its original pixel geometry.
       ctx.h1 = 0;
-      const renderOpts = multi
-        ? { ...opts, preserve: true, fluidCoordinates: true, responsive: false, exact: false, annotate: true }
-        : opts.exact
-          ? { ...opts, preserve: false, fluidCoordinates: false, responsive: false, exact: true, annotate: false }
-          : { ...opts, preserve: false, fluidCoordinates: false, responsive: true, exact: false, annotate: false };
+      const renderOpts = { ...opts, preserve: false, fluidCoordinates: false, responsive: false, exact: true, annotate: false };
       const markup = await toHtml(n, null, renderOpts, 0, ctx);
       references.push({ name: n.name, width: Math.round(n.width), height: Math.round(n.height), html: markup });
     }
@@ -633,7 +601,7 @@ async function generate(opts) {
     const maskCss = Object.keys(ctx.maskKey).map((id) => `.${ctx.maskCls[id]}{background-image:url(__IMG_${ctx.maskKey[id]}__)}`);
     const fontCss = Object.keys(fonts).map((f) => `.${slug(f)}{font-family:"${cssEsc(f)}",${/mono|code|courier/i.test(f) ? 'monospace' : (/serif|playfair|merriweather|lora|georgia|times|garamond|cormorant|bodoni/i.test(f) && !/sans/i.test(f)) ? 'serif' : 'sans-serif'}}`);
     if (imageCss.length || maskCss.length || fontCss.length) head += '<style>' + imageCss.concat(maskCss, fontCss).join('') + '</style>\n';
-    figma.ui.postMessage({ type: 'result', html: head + desktop.html, fonts, colors, images, sizes, width: desktop.width, height: desktop.height, responsive: !!opts.responsive, references: multi ? references : [] });
+    figma.ui.postMessage({ type: 'result', html: head + desktop.html, fonts, colors, images, sizes, width: desktop.width, height: desktop.height, responsive: false, references: [] });
   } catch (e) {
     figma.ui.postMessage({ type: 'error', msg: String(e && e.stack ? e.stack : e) });
   }
@@ -658,16 +626,6 @@ function sendSelection() {
 }
 figma.on('selectionchange', sendSelection);
 figma.ui.onmessage = async (m) => {
-  if (m.type === 'capture-reference' && ['mobile', 'desktop'].includes(m.role)) {
-    const selected = figma.currentPage.selection;
-    if (selected.length !== 1 || !referenceNode(selected[0])) return figma.ui.postMessage({ type: 'reference-error', msg: 'Select one frame, section, component, instance or group on the canvas, then click Use selection.' });
-    referenceSlots[m.role] = selected[0];
-    sendReferences();
-  }
-  if (m.type === 'clear-references') {
-    referenceSlots.mobile = null; referenceSlots.desktop = null;
-    sendReferences();
-  }
   if (m.type === 'generate') await generate(m.opts);
   if (m.type === 'ready') {
     sendSelection();
